@@ -18,5 +18,23 @@ export default {
           })
         })
     })
+  },
+  refreshToken: async function () {
+    return new Promise((resolve, reject) => {
+      axios.post(`${conf.apiHost}/auth/refresh`, '', {
+        headers: {
+          Authorization: localStorage.getItem('jwtToken')
+        }
+      })
+        .then((response) => {
+          resolve(response.data)
+        })
+        .catch((err) => {
+          reject({
+            status: err.response.status,
+            message: err.response.data.error
+          })
+        })
+    })
   }
 }

@@ -66,6 +66,7 @@
 <script>
 import EssentialLink from 'components/EssentialLink'
 import Authentication from 'pages/Authentication'
+import api from '../api/v1'
 
 export default {
   name: 'MainLayout',
@@ -79,6 +80,7 @@ export default {
     return {
       leftDrawerOpen: false,
       isAuthenticated: false,
+      tokenRefresher: null,
       essentialLinks: [
         {
           title: 'Register',
@@ -99,10 +101,43 @@ export default {
   methods: {
     checkAuthentication () {
       this.isAuthenticated = localStorage.getItem('jwtToken') !== null
+
+      if (this.isAuthenticated) {
+        if (this.tokenRefresher === null) {
+          this.tokenRefresher = setInterval(() => { this.refreshToken() }, 1000 * 60 * 2)
+        }
+        this.$root.$on('loggedOut', () => { clearInterval(this.tokenRefresher) })
+      }
     },
     logout () {
       localStorage.removeItem('jwtToken')
+      this.$root.$emit('loggedOut')
       this.checkAuthentication()
+    },
+    refreshToken () {
+      api.refreshToken()
+        .then((jwtToken) => {
+          localStorage.setItem('jwtToken', jwtToken)
+        })
+        .catch((err) => {
+          let msg = ''
+
+          if (err.status === 400 && err.error === 'TOKEN_EXPIRED') {
+            msg = 'Your authentication token has expired, please login again'
+          } else if (err.status === 400) {
+            msg = 'Invalid request'
+          } else {
+            msg = 'Something bad happened with authentication'
+          }
+
+          this.$q.notify({
+            message: 'Authentication failure',
+            caption: msg,
+            color: 'negative',
+            position: 'top',
+            timeout: 5000
+          })
+        })
     }
   },
 
