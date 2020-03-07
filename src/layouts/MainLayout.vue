@@ -1,7 +1,7 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" v-if="isAuthenticated">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="bg-light-green-6">
         <q-btn
           flat
           dense
@@ -12,10 +12,10 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Trackpal
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div></div>
       </q-toolbar>
     </q-header>
 
@@ -37,6 +37,19 @@
           :key="link.title"
           v-bind="link"
         />
+
+        <q-item clickable @click.native="logout()">
+          <q-item-section avatar>
+            <q-icon name="arrow_back" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Logout</q-item-label>
+            <q-item-label caption>
+              Leave the app
+            </q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -44,60 +57,60 @@
       <router-view />
     </q-page-container>
   </q-layout>
+
+  <q-layout view="lHh Lpr lFf" v-else>
+    <authentication />
+  </q-layout>
 </template>
 
 <script>
 import EssentialLink from 'components/EssentialLink'
+import Authentication from 'pages/Authentication'
 
 export default {
   name: 'MainLayout',
 
   components: {
-    EssentialLink
+    EssentialLink,
+    Authentication
   },
 
   data () {
     return {
       leftDrawerOpen: false,
+      isAuthenticated: false,
       essentialLinks: [
         {
-          title: 'Docs',
-          caption: 'quasar.dev',
-          icon: 'school',
-          link: 'https://quasar.dev'
+          title: 'Register',
+          caption: 'Create an account',
+          icon: 'account_circle',
+          link: '/'
         },
         {
-          title: 'Github',
-          caption: 'github.com/quasarframework',
-          icon: 'code',
-          link: 'https://github.com/quasarframework'
-        },
-        {
-          title: 'Discord Chat Channel',
-          caption: 'chat.quasar.dev',
-          icon: 'chat',
-          link: 'https://chat.quasar.dev'
-        },
-        {
-          title: 'Forum',
-          caption: 'forum.quasar.dev',
-          icon: 'record_voice_over',
-          link: 'https://forum.quasar.dev'
-        },
-        {
-          title: 'Twitter',
-          caption: '@quasarframework',
-          icon: 'rss_feed',
-          link: 'https://twitter.quasar.dev'
-        },
-        {
-          title: 'Facebook',
-          caption: '@QuasarFramework',
-          icon: 'public',
-          link: 'https://facebook.quasar.dev'
+          title: 'Trackpal',
+          caption: 'Trackpal platform',
+          icon: 'apps',
+          link: '/'
         }
       ]
     }
+  },
+
+  methods: {
+    checkAuthentication () {
+      this.isAuthenticated = localStorage.getItem('jwtToken') !== null
+    },
+    logout () {
+      localStorage.removeItem('jwtToken')
+      this.checkAuthentication()
+    }
+  },
+
+  mounted () {
+    this.checkAuthentication()
+    this.$root.$on('loggedIn', () => {
+      this.checkAuthentication()
+    })
   }
 }
 </script>
