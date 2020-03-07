@@ -13,7 +13,7 @@
     <div v-if="mode === 'existing'">
       <q-btn flat label="back" icon="keyboard_arrow_left" @click="mode=''" />
 
-      <div class="text-right">
+      <div class="text-right" v-if="!loading.devices">
         {{ (devices.length > 0) ? 'Select a device from the list' : 'No devices exist to your account' }}
       </div>
 
@@ -42,6 +42,9 @@ export default {
   data () {
     return {
       mode: '',
+      loading: {
+        devices: false
+      },
       devices: []
     }
   },
@@ -56,9 +59,12 @@ export default {
 
   methods: {
     getDevices () {
+      const self = this
+      this.loading.devices = true
       api.getDevices()
         .then(devices => {
           this.devices = devices
+          this.loading.devices = false
         })
         .catch(() => {
           this.$q.notify({
@@ -67,6 +73,7 @@ export default {
             position: 'top',
             timeout: 5000
           })
+          self.loading.devices = false
         })
     },
 

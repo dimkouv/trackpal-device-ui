@@ -1,3 +1,3 @@
 export default {
-  apiHost: 'http://127.0.0.1:8081'
+  apiHost: 'https://trackpal.xyz/api/v1'
 }
