@@ -104,6 +104,7 @@ export default {
 
       if (this.isAuthenticated) {
         if (this.tokenRefresher === null) {
+          this.refreshToken()
           this.tokenRefresher = setInterval(() => { this.refreshToken() }, 1000 * 60 * 2)
         }
         this.$root.$on('loggedOut', () => { clearInterval(this.tokenRefresher) })
@@ -126,6 +127,9 @@ export default {
             msg = 'Your authentication token has expired, please login again'
           } else if (err.status === 400) {
             msg = 'Invalid request'
+          } else if (err.status === 401) {
+            msg = 'Your token has expired'
+            this.logout()
           } else {
             msg = 'Something bad happened with authentication'
           }

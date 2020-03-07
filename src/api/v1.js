@@ -36,5 +36,23 @@ export default {
           })
         })
     })
+  },
+  getDevices: async function () {
+    return new Promise((resolve, reject) => {
+      axios.get(`${conf.apiHost}/tracking/devices`, {
+        headers: {
+          Authorization: localStorage.getItem('jwtToken')
+        }
+      })
+        .then((response) => {
+          resolve(response.data)
+        })
+        .catch((err) => {
+          reject({
+            status: err.response.status,
+            message: err.response.data.error
+          })
+        })
+    })
   }
 }
