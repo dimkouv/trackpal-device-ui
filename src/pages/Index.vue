@@ -217,7 +217,21 @@ export default {
     },
 
     disableAlerting () {
-      alert('tbd')
+      api.disableAlerting(this.selectedDevice.id)
+        .then((data) => {
+          console.log('alerting disabled')
+          this.selectedDevice.alertingEnabled = false
+          localStorage.setItem('selectedDevice', JSON.stringify(this.selectedDevice))
+        })
+        .catch((err) => {
+          console.log(`${err.status} ${err.message}`)
+          this.$q.notify({
+            message: 'Failed to disable alerting',
+            color: 'negative',
+            position: 'top',
+            timeout: 5000
+          })
+        })
     },
 
     switchDevice () {
