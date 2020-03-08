@@ -1,5 +1,6 @@
 <template>
   <div class="device-selector">
+    msg: {{ msg }}
 
     <div v-if="mode === ''" class="text-center text-h5 text-teal-10">
       Is this a new or existing device?
@@ -47,8 +48,9 @@ import api from '../api/v1'
 export default {
   name: 'DevicePicker',
 
-  data () {
+  data: function () {
     return {
+      msg: 'waiting...',
       mode: '',
       loading: {
         devices: false
@@ -87,6 +89,7 @@ export default {
     },
 
     selectDevice (device) {
+      this.msg = '1234'
       localStorage.setItem('selectedDevice', JSON.stringify(device))
       this.$root.$emit('selectedDevice')
     }

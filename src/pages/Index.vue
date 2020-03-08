@@ -13,21 +13,50 @@
         </div>
       </div>
 
-      <div class="device-form justify-center q-mt-lg text-center">
-        <q-btn label="Enable alerting" color="teal" outline v-if="!selectedDevice.alertingEnabled" class="q-mt-md" @click="enableAlerting()" />
-        <q-btn label="Disable alerting" color="teal" v-else class="q-mt-md" @click="disableAlerting()" />
-
+      <div class="device-form q-mt-lg text-center">
         <div class="q-mt-lg">
-          GPS position: <strong>{{ positionMsg }}</strong>
-        </div>
+          <strong>
+            <q-icon name="las la-satellite" />
+            {{ positionMsg }}
+          </strong>
 
-        <div>
-          position debug: {{ JSON.stringify(position) }}
+          <div v-if="position !== null && position.hasOwnProperty('location')" class="q-mt-md">
+            <div class="text-left">
+              Latitude:
+              <span class="text-grey-7">
+                {{ position.location.lat.toFixed(4) }}
+              </span><br>
+
+              Longitude:
+              <span class="text-grey-7">
+                {{ position.location.lng.toFixed(4) }}
+              </span><br>
+
+              Timestamp:
+              <span class="text-grey-7">
+                {{ new Date(position.timestamp).toLocaleString() }}
+              </span><br>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="device-form justify-center q-mt-lg text-center">
-        <div class="q-mt-md">
+        <div class="q-mt-lg">
+          <strong>
+            <q-icon name="las la-bell" />
+            Alerting is {{ (selectedDevice.alertingEnabled) ? 'enabled' : 'disabled' }}
+          </strong>
+
+          <div>
+            <q-btn label="Enable alerting" color="teal" outline v-if="!selectedDevice.alertingEnabled" class="q-mt-md" @click="enableAlerting()" />
+            <q-btn label="Disable alerting" color="teal" v-else class="q-mt-md" @click="disableAlerting()" />
+          </div>
+        </div>
+      </div>
+
+      <div class="device-form justify-center q-mt-lg text-center">
+        <div class="q-mt-lg">
           <q-btn size="sm" outline @click="switchDevice()" label="Switch device" icon="las la-satellite-dish" class="q-mr-md" />
         </div>
       </div>
@@ -37,8 +66,6 @@
 
 <script>
 import DevicePicker from 'components/DevicePicker'
-import { Plugins } from '@capacitor/core'
-const { Geolocation } = Plugins
 
 export default {
   components: {
@@ -50,20 +77,33 @@ export default {
   data () {
     return {
       position: null,
-      positionMsg: 'determining...',
+      positionMsg: 'Determining location...',
       selectedDevice: null
     }
   },
 
   methods: {
+    showPosition (position) {
+      this.position = {
+        location: {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        },
+        timestamp: position.timestamp
+      }
+
+      this.positionMsg = 'Location details'
+    },
+    errorPosition (err) {
+      this.positionMsg = `${err.message} (code=${err.code})`
+    },
     getCurrentPosition () {
-      Geolocation.getCurrentPosition()
-        .then(position => {
-          this.position = position
-        })
-        .catch((err) => {
-          this.positionMsg = 'Error getting location: ' + JSON.stringify(err)
-        })
+      if (navigator.geolocation) {
+        this.positionMsg = 'Trying to find location...'
+        navigator.geolocation.getCurrentPosition(this.showPosition, this.errorPosition)
+      } else {
+        this.positionMsg = 'Geolocation is not available'
+      }
     },
 
     enableAlerting () {
@@ -90,17 +130,12 @@ export default {
   },
 
   mounted () {
-    const self = this
     this.checkSelectedDevice()
     this.$root.$on('selectedDevice', this.checkSelectedDevice)
 
-    setInterval(() => {
-      self.getCurrentPosition()
-    }, 2000)
-  },
-
-  beforeDestroy () {
-    Geolocation.clearWatch(this.geoId)
+    setTimeout(() => {
+      this.getCurrentPosition()
+    }, 5000)
   }
 }
 </script>
