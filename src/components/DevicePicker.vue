@@ -36,6 +36,17 @@
 
     <div v-if="mode === 'new'">
       <q-btn flat label="back" icon="las la-chevron-left" @click="mode=''" />
+
+      <div class="text-center text-h6 text-teal-10 q-mt-lg">
+        Give a name for your new device
+
+        <q-input minLength="3" maxLength="15" bottom-slots outlined v-model="newDeviceName" label="Device name" class="q-mt-md">
+          <template v-slot:after>
+            <q-btn round dense icon="las la-check" @click="createDevice" />
+          </template>
+        </q-input>
+      </div>
+
     </div>
   </div>
 </template>
@@ -48,6 +59,7 @@ export default {
 
   data: function () {
     return {
+      newDeviceName: '',
       mode: '',
       loading: {
         devices: false
@@ -65,6 +77,21 @@ export default {
   },
 
   methods: {
+    createDevice () {
+      api.createDevice(this.newDeviceName)
+        .then(data => {
+          this.selectDevice(data)
+        })
+        .catch(() => {
+          this.$q.notify({
+            message: 'Failed to create device',
+            color: 'negative',
+            position: 'top',
+            timeout: 5000
+          })
+        })
+    },
+
     getDevices () {
       const self = this
       this.devices = []
@@ -86,7 +113,6 @@ export default {
     },
 
     selectDevice (device) {
-      this.msg = '1234'
       localStorage.setItem('selectedDevice', JSON.stringify(device))
       this.$root.$emit('selectedDevice')
     }

@@ -110,5 +110,25 @@ export default {
           })
         })
     })
+  },
+  createDevice: async function (deviceName) {
+    return new Promise((resolve, reject) => {
+      axios.post(`${conf.apiHost}/tracking/devices`, {
+        name: deviceName
+      }, {
+        headers: {
+          Authorization: localStorage.getItem('jwtToken')
+        }
+      })
+        .then((response) => {
+          resolve(response.data)
+        })
+        .catch((err) => {
+          reject({
+            status: err.response.status,
+            message: err.response.data.error
+          })
+        })
+    })
   }
 }
