@@ -73,5 +73,24 @@ export default {
           })
         })
     })
+  },
+  enableAlerting: async function (deviceID, payload) {
+    payload.recorded_at = new Date(payload.recorded_at).toISOString()
+    return new Promise((resolve, reject) => {
+      axios.post(`${conf.apiHost}/tracking/devices/${deviceID}/alerting/enable`, payload, {
+        headers: {
+          Authorization: localStorage.getItem('jwtToken')
+        }
+      })
+        .then((response) => {
+          resolve(response.data)
+        })
+        .catch((err) => {
+          reject({
+            status: err.response.status,
+            message: err.response.data.error
+          })
+        })
+    })
   }
 }

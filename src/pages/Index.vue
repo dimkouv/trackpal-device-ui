@@ -133,6 +133,16 @@ export default {
     },
 
     enableTracking () {
+      if (this.position === null || this.position.location === null) {
+        this.$q.notify({
+          message: 'The position should be determined first',
+          color: 'warning',
+          position: 'bottom',
+          timeout: 5000
+        })
+        return
+      }
+
       this.trackingEnabled = true
       if (this.tracker !== null) {
         clearInterval(this.tracker)
@@ -173,8 +183,37 @@ export default {
     },
 
     enableAlerting () {
-      this.selectedDevice.alertingEnabled = true
-      alert('tbd')
+      if (this.position === null || this.position.location === null) {
+        this.$q.notify({
+          message: 'The position should be determined first',
+          color: 'warning',
+          position: 'bottom',
+          timeout: 5000
+        })
+        return
+      }
+
+      api.enableAlerting(this.selectedDevice.id, this.position)
+        .then((data) => {
+          console.log('alerting enabled')
+          this.$q.notify({
+            message: 'Make sure to disable alerting when after deciding to move your device',
+            color: 'info',
+            position: 'top',
+            timeout: 5000
+          })
+          this.selectedDevice.alertingEnabled = true
+          localStorage.setItem('selectedDevice', JSON.stringify(this.selectedDevice))
+        })
+        .catch((err) => {
+          console.log(`${err.status} ${err.message}`)
+          this.$q.notify({
+            message: 'Failed to enable alerting',
+            color: 'negative',
+            position: 'top',
+            timeout: 5000
+          })
+        })
     },
 
     disableAlerting () {

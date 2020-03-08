@@ -1,7 +1,5 @@
 <template>
   <div class="device-selector">
-    msg: {{ msg }}
-
     <div v-if="mode === ''" class="text-center text-h5 text-teal-10">
       Is this a new or existing device?
 
@@ -50,7 +48,6 @@ export default {
 
   data: function () {
     return {
-      msg: 'waiting...',
       mode: '',
       loading: {
         devices: false

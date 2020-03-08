@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf" v-if="isAuthenticated">
-    <q-header elevated>
+    <q-header class="shadow-1">
       <q-toolbar class="bg-light-green-6">
         <q-btn
           flat
