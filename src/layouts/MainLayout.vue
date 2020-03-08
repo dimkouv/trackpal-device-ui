@@ -6,7 +6,7 @@
           flat
           dense
           round
-          icon="menu"
+          icon="las la-bars"
           aria-label="Menu"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
@@ -40,7 +40,7 @@
 
         <q-item clickable @click.native="logout()">
           <q-item-section avatar>
-            <q-icon name="arrow_back" />
+            <q-icon name="las la-sign-out-alt" />
           </q-item-section>
 
           <q-item-section>
@@ -83,15 +83,9 @@ export default {
       tokenRefresher: null,
       essentialLinks: [
         {
-          title: 'Register',
-          caption: 'Create an account',
-          icon: 'account_circle',
-          link: '/'
-        },
-        {
           title: 'Trackpal',
-          caption: 'Trackpal platform',
-          icon: 'apps',
+          caption: 'Tracking platform',
+          icon: 'las la-globe-europe',
           link: '/'
         }
       ]
@@ -153,3 +147,8 @@ export default {
   }
 }
 </script>
+
+<style lang="sass">
+.q-toolbar
+  min-height: 64px
+</style>

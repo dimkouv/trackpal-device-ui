@@ -1,34 +1,42 @@
 <template>
   <div class="device-selector">
 
-    <div v-if="mode === ''">
+    <div v-if="mode === ''" class="text-center text-h5 text-teal-10">
       Is this a new or existing device?
 
       <div class="q-mt-md text-center">
-        <q-btn label="existing" @click="mode='existing'" />
-        <q-btn label="new" @click="mode='new'" class="bg-lime-1 q-ml-sm" />
+        <q-btn outline label="existing" color="teal" icon="las la-ellipsis-v"  @click="mode='existing'" />
+        <q-btn label="new" icon="las la-plus-square" color="teal" @click="mode='new'" class="text-white q-ml-sm" />
       </div>
     </div>
 
     <div v-if="mode === 'existing'">
-      <q-btn flat label="back" icon="keyboard_arrow_left" @click="mode=''" />
+      <q-btn flat label="back" icon="las la-chevron-left" @click="mode=''" />
 
       <div class="text-right" v-if="!loading.devices">
-        {{ (devices.length > 0) ? 'Select a device from the list' : 'No devices exist to your account' }}
+        {{ (devices.length > 0) ? '' : 'No devices exist to your account' }}
+      </div>
+      <div v-else class="text-right">
+        <q-spinner-radio />
       </div>
 
       <div class="device-list q-mt-md">
-        <div v-for="device in devices" :key="device.id" class="q-px-lg" @click="selectDevice(device)">
-          <div class="device q-py-md">
-            <div class="text-h5">{{ device.name }}</div>
-            <div>Created at: <span class="text-grey-7">{{ new Date(device.created_at).toLocaleString() }}</span></div>
+        <div v-for="device in devices" :key="device.id" class="device q-px-md q-mt-lg" @click="selectDevice(device)">
+          <div class="device-info">
+            <div class="q-p-md">
+              <span class="text-h4 text-teal-10">
+                <q-icon name="las la-satellite-dish" />
+                {{ device.name }}
+              </span>
+              <div class="text-center">Created at: <span class="text-grey-7">{{ new Date(device.created_at).toLocaleString() }}</span></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <div v-if="mode === 'new'">
-      <q-btn flat label="back" @click="mode=''" />
+      <q-btn flat label="back" icon="las la-chevron-left" @click="mode=''" />
     </div>
   </div>
 </template>
@@ -60,6 +68,7 @@ export default {
   methods: {
     getDevices () {
       const self = this
+      this.devices = []
       this.loading.devices = true
       api.getDevices()
         .then(devices => {
@@ -87,12 +96,11 @@ export default {
 
 <style lang="sass">
 .device-list
-  border: 1px solid $grey-5
   min-width: 300px
 
 .device
-  padding: 10px
-  border-radius: 3px
+  padding: 16px
+  border-radius: 16px
   border-bottom: 1px solid $grey-3
   &:hover
     background-color: $grey-2
