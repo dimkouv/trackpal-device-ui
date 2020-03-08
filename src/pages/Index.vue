@@ -13,11 +13,14 @@
         </div>
       </div>
 
-      <div class="device-form q-mt-lg text-center">
+      <!-- location details -->
+      <div class="q-mt-xl">
         <div class="q-mt-lg">
           <strong>
-            <q-icon name="las la-satellite" />
-            {{ positionMsg }}
+            <div style="max-width: 256px">
+              <q-icon name="las la-satellite" />
+              {{ positionMsg }}
+            </div>
           </strong>
 
           <div v-if="position !== null && position.hasOwnProperty('location')" class="q-mt-md">
@@ -34,14 +37,30 @@
 
               Timestamp:
               <span class="text-grey-7">
-                {{ new Date(position.timestamp).toLocaleString() }}
+                {{ new Date(position.recorded_at).toLocaleString() }}
               </span><br>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="device-form justify-center q-mt-lg text-center">
+      <!-- tracking -->
+      <div class="device-form justify-center q-mt-lg">
+        <div class="q-mt-lg">
+          <strong>
+            <q-icon name="las la-satellite-dish" />
+            Tracking is {{ (trackingEnabled) ? 'enabled' : 'disabled' }}
+          </strong>
+
+          <div>
+            <q-btn label="Enable tracking" color="teal" outline v-if="!trackingEnabled" class="q-mt-md" @click="enableTracking()" />
+            <q-btn label="Disable tracking" color="teal" v-else class="q-mt-md" @click="disableTracking()" />
+          </div>
+        </div>
+      </div>
+
+      <!-- alerting -->
+      <div class="device-form justify-center q-mt-lg">
         <div class="q-mt-lg">
           <strong>
             <q-icon name="las la-bell" />
@@ -55,7 +74,8 @@
         </div>
       </div>
 
-      <div class="device-form justify-center q-mt-lg text-center">
+      <!-- device switcher -->
+      <div class="device-form justify-center q-mt-lg">
         <div class="q-mt-lg">
           <q-btn size="sm" outline @click="switchDevice()" label="Switch device" icon="las la-satellite-dish" class="q-mr-md" />
         </div>
@@ -66,6 +86,7 @@
 
 <script>
 import DevicePicker from 'components/DevicePicker'
+import api from '../api/v1'
 
 export default {
   components: {
@@ -76,6 +97,9 @@ export default {
 
   data () {
     return {
+      lastTrackedPosition: null,
+      trackingEnabled: false,
+      tracker: null,
       position: null,
       positionMsg: 'Determining location...',
       selectedDevice: null
@@ -83,19 +107,61 @@ export default {
   },
 
   methods: {
+    sendTrackInput () {
+      if (this.position === null || this.position.location === null) {
+        return
+      }
+
+      if (JSON.stringify(this.position.location) === this.lastTrackedPosition) {
+        console.log('skipping since it is the same we sent previously')
+        return
+      }
+      this.lastTrackedPosition = JSON.stringify(this.position.location)
+
+      api.sendTrackInput(this.selectedDevice.id, this.position)
+        .then((data) => {
+          console.log('created')
+        })
+        .catch((err) => {
+          this.$q.notify({
+            message: `Failed to send coordinates: ${err.status} ${err.message}`,
+            color: 'negative',
+            position: 'top',
+            timeout: 5000
+          })
+        })
+    },
+
+    enableTracking () {
+      this.trackingEnabled = true
+      if (this.tracker !== null) {
+        clearInterval(this.tracker)
+      }
+
+      this.tracker = setInterval(this.sendTrackInput, 5000)
+    },
+
+    disableTracking () {
+      this.trackingEnabled = false
+      if (this.tracker !== null) {
+        clearInterval(this.tracker)
+      }
+    },
+
     showPosition (position) {
       this.position = {
         location: {
           lat: position.coords.latitude,
           lng: position.coords.longitude
         },
-        timestamp: position.timestamp
+        recorded_at: position.timestamp
       }
 
       this.positionMsg = 'Location details'
     },
     errorPosition (err) {
-      this.positionMsg = `${err.message} (code=${err.code})`
+      console.log(`${err.message} (code=${err.code})`)
+      this.positionMsg = 'Unable to determine location'
     },
     getCurrentPosition () {
       if (navigator.geolocation) {
@@ -116,6 +182,7 @@ export default {
     },
 
     switchDevice () {
+      this.disableTracking()
       localStorage.removeItem('selectedDevice')
       this.checkSelectedDevice()
     },
@@ -132,10 +199,11 @@ export default {
   mounted () {
     this.checkSelectedDevice()
     this.$root.$on('selectedDevice', this.checkSelectedDevice)
+    this.getCurrentPosition()
 
-    setTimeout(() => {
+    setInterval(() => {
       this.getCurrentPosition()
-    }, 5000)
+    }, 10000)
   }
 }
 </script>

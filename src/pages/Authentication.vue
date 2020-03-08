@@ -94,7 +94,7 @@ export default {
 }
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 body
   overflow: hidden
 </style>
