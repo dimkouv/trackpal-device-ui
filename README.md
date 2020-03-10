@@ -1,4 +1,4 @@
-![Logo](src/assets/trackpal-logo.svg)
+<img src="src/assets/trackpal-logo.svg" width="300px">
 
 # Trackpal (trackpal-device-ui)
 
