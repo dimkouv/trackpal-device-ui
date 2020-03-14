@@ -2,21 +2,17 @@
   <q-page-container>
     <q-page class="flex justify-center q-mt-xl">
       <div class="form-container">
-        <div class="login-form q-pa-lg rounded-borders">
-          <p class="text-light-green-6 text-h3 text-left">
-            <q-icon name="las la-route" />
-            Trackpal Device
-          </p>
-
-          <p class="text-right">
-            Login to access your tracking device
+        <div class="login-form q-pa-lg rounded-borders" style="min-width: 400px">
+          <q-img src="~assets/trackpal-logo.svg" />
+          <p class="text-h5 text-right clr-tp-pale">
+            device platform
           </p>
 
           <div>
             <form>
-              <q-input autocomplete outlined v-model="loginForm.email" name="email" label="Email" @keyup.enter="login()" />
+              <q-input color="teal" autocomplete outlined v-model="loginForm.email" name="email" label="Email" @keyup.enter="login()" />
 
-              <q-input autocomplete name="password" class="q-mt-sm" outlined v-model="loginForm.password" :type="pwdHidden ? 'password' : 'text'" @keyup.enter="login()" label="Password">
+              <q-input color="teal" autocomplete name="password" class="q-mt-sm" outlined v-model="loginForm.password" :type="pwdHidden ? 'password' : 'text'" @keyup.enter="login()" label="Password">
                 <template v-slot:append>
                   <q-icon
                     :name="pwdHidden ? 'las la-eye' : 'las la-eye-slash'"
@@ -29,9 +25,9 @@
           </div>
 
           <div class="submit-btn text-right q-mt-md">
-            <q-btn outline color="light-blue-7" label="Register" />
-            <q-btn color="light-green-7 q-ml-sm" label="Login" icon="las la-user" @click="login" v-show="!loading" />
-            <q-btn v-show="loading" color="light-green-7 q-ml-sm" disabled><q-spinner-radio /></q-btn>
+            <q-btn class="bg-white clr-tp-pale" label="Register" />
+            <q-btn class="bg-tp-pale text-white q-ml-sm" label="Login" icon="las la-user" @click="login" v-show="!loading" />
+            <q-btn v-show="loading" disabled><q-spinner-radio /></q-btn>
           </div>
 
         </div>
