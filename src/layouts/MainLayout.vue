@@ -1,21 +1,19 @@
 <template>
   <q-layout view="lHh Lpr lFf" v-if="isAuthenticated">
     <q-header class="shadow-1">
-      <q-toolbar class="bg-light-green-6">
+      <q-toolbar class="bg-white">
         <q-btn
           flat
           dense
           round
           icon="las la-bars"
+          class="clr-tp-teal"
           aria-label="Menu"
           @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
-        <q-toolbar-title>
-          Trackpal
-        </q-toolbar-title>
-
-        <div></div>
+        <q-toolbar-title class="q-mt-sm clr-tp-teal">device platform</q-toolbar-title>
+        <div class="q-mr-lg q-mt-sm"><img src="statics/trackpal-logo.png" width="200px"></div>
       </q-toolbar>
     </q-header>
 
@@ -25,7 +23,7 @@
       bordered
       content-class="bg-grey-1"
     >
-      <q-list>
+      <q-list class="text-teal-9">
         <q-item-label
           header
           class="text-grey-8"

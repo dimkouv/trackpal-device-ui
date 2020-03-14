@@ -4,7 +4,7 @@
       <div class="form-container">
         <div class="login-form q-pa-lg rounded-borders" style="min-width: 400px">
           <q-img src="~assets/trackpal-logo.svg" />
-          <p class="text-h5 text-right clr-tp-pale">
+          <p class="text-h5 text-right clr-tp-teal">
             device platform
           </p>
 
@@ -25,8 +25,8 @@
           </div>
 
           <div class="submit-btn text-right q-mt-md">
-            <q-btn class="bg-white clr-tp-pale" label="Register" />
-            <q-btn class="bg-tp-pale text-white q-ml-sm" label="Login" icon="las la-user" @click="login" v-show="!loading" />
+            <q-btn class="bg-white clr-tp-teal" label="Register" />
+            <q-btn class="bg-tp-teal text-white q-ml-sm" label="Login" icon="las la-user" @click="login" v-show="!loading" />
             <q-btn v-show="loading" disabled><q-spinner-radio /></q-btn>
           </div>
 

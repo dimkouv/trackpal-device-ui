@@ -10,7 +10,7 @@
     </div>
 
     <div v-if="mode === 'existing'">
-      <q-btn flat label="back" icon="las la-chevron-left" @click="mode=''" />
+      <q-btn flat label="back" icon="las la-angle-left" @click="mode=''" />
 
       <div class="text-right" v-if="!loading.devices">
         {{ (devices.length > 0) ? '' : 'No devices exist to your account' }}
@@ -35,7 +35,7 @@
     </div>
 
     <div v-if="mode === 'new'">
-      <q-btn flat label="back" icon="las la-chevron-left" @click="mode=''" />
+      <q-btn flat label="back" icon="las la-angle-left" @click="mode=''" />
 
       <div class="text-center text-h6 text-teal-10 q-mt-lg">
         Give a name for your new device
